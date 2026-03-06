@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Blueberry</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+
+  <div class="header">
+    <span class="brand-text">Blue</span>
+    <img src="favicon.ico" class="logo" />
+    <span class="brand-text">Berry</span>
+  </div>
+
+  <div id="authArea" style="display:none; text-align:center; padding:20px;">
+    <p style="margin-bottom:20px; font-size:14px; color:#ffffff;">Please sign in to continue</p>
+    <button id="signInBtn" style="padding:10px 20px; background:#8B72BE; color:#fff; border:none; border-radius:4px; cursor:pointer; font-size:14px;">Sign In</button>
+  </div>
+
+  <div id="appArea" class="tabs-area">
+    <div class="add-form">
+      <input type="text" id="tabName" placeholder="Tab Name" />
+      <input type="url" id="tabURL" placeholder="https://example.com" />
+      <button id="addTab">Add</button>
+    </div>
+
+    <div class="counter" id="counter">0 / 20</div>
+
+    <div id="savedTabs">
+      <p class="placeholder">Saved tabs will appear here</p>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

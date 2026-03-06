@@ -1,0 +1,159 @@
+:root {
+  --logo-bg: #A79DFD;   /* light blueberry */
+  --tabs-bg: #12283F;   /* dark blackberry */
+  --text-dark: #12283F;
+  --text-light: #ffffff;
+}
+
+body {
+  margin: 0;
+  width: 300px;
+  font-family: 'Nunito', sans-serif;
+  background-color: var(--tabs-bg);
+}
+
+.header {
+  background-color: var(--logo-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 20px 14px;
+}
+
+.logo {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+}
+
+.brand-text {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--text-dark);
+  margin: -10px;
+}
+
+.tabs-area {
+  background-color: var(--tabs-bg);
+  padding: 20px;
+  min-height: 160px;
+}
+
+.placeholder {
+  margin: 0;
+  font-size: 13px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ========== ADD FORM ========== */
+.add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.add-form input {
+  padding: 6px 8px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  font-size: 13px;
+}
+
+.add-form button {
+  padding: 6px 8px;
+  background-color: var(--logo-bg);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.add-form button:hover {
+  opacity: 0.85;
+}
+
+/* ========== TAB CELLS ========== */
+.tab-cell {
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  background-color: #A79DFD;
+  color: var(--text-dark);
+  font-weight: 600;
+  cursor: pointer;
+  word-break: break-word;
+  transition: transform 0.1s;
+}
+
+.tab-cell:hover {
+  transform: scale(1.03);
+}
+.tab-cell {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  background-color: #A79DFD;
+  color: var(--text-dark);
+  font-weight: 600;
+  cursor: pointer;
+  word-break: break-word;
+  transition: transform 0.1s;
+}
+
+.tab-cell:hover {
+  transform: scale(1.03);
+}
+
+/* Delete button */
+.delete-btn, .tab-cell button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  transition: color 0.2s, transform 0.1s;
+}
+
+.delete-btn:hover, .tab-cell button:hover {
+  color: rgba(240, 188, 250, 0.658);
+}
+
+.delete-btn:active, .tab-cell button:active {
+  transform: scale(0.9); /* visual feedback on click */
+}
+.circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: conic-gradient(#1e3a8a 0%, #ccc 0%);
+  margin-right: 8px;
+}
+.counter {
+  font-size: 12px;
+  text-align: center;
+  margin-bottom: 8px;
+  color: rgba(255,255,255,0.7);
+}
+
+.tick {
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.1s, color 0.1s;
+}
+
+.tick:hover {
+  color: rgba(240, 188, 250, 0.9);
+  transform: scale(1.15);
+}
+
+.tick:active {
+  transform: scale(0.9);
+}

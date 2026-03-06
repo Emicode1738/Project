@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Bluberry</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+  <div class="login-container">
+    <div class="login-box">
+
+      <div class="brand">
+        <span class="brand-text">Blue</span>
+        <img src="favicon.ico" alt="Blueberry icon" class="logo">
+        <span class="brand-text">Berry</span>
+      </div>
+
+      <p class="subtitle">Sign in to continue</p>
+
+      <form method="POST" action="#" id="login-form" novalidate>
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username" placeholder="e.g. Joe15" required maxlength="8" pattern="[A-Za-z0-9]{1,8}">
+
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" placeholder="••••••••••" required maxlength="10">
+
+        <button type="submit" class="login-btn">Login</button>
+      </form>
+
+      <p id="client-error" class="error" style="display:none"></p>
+
+      <script src="login.js"></script>
+
+      <!-- Server messages will be shown by login.js reading URL params -->
+
+    </div>
+  </div>
+
+</body>
+</html>
+
+
+

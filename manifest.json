@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Blueberry",
+  "version": "1.0",
+  "description": "A calm, minimal tab manager",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "offscreen",
+    "notifications"
+  ],
+  "icons": {
+    "16": "berry.png",
+    "48": "berry.png",
+    "128": "berry.png"
+  }
+}
