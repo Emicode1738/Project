@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Login Connection</title>
+</head>
+<body>
+    <h1>Testing Login Connection</h1>
+    <p>This page tests if the login connection is working properly.</p>
+    
+    <button id="testLoginBtn">Test Login Page</button>
+    <button id="testExtensionMessageBtn">Test Extension Message</button>
+    
+    <div id="results"></div>
+    
+    <script>
+        function testLogin() {
+            // Test if we can access the login page
+            fetch('http://localhost:3000/')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('results').innerHTML = 
+                        '<h3>✅ Login page accessible</h3><p>Server is running and serving the login page correctly.</p>';
+                })
+                .catch(error => {
+                    document.getElementById('results').innerHTML = 
+                        '<h3>❌ Login page not accessible</h3><p>Error: ' + error.message + '</p>';
+                });
+        }
+        
+        function testExtensionMessage() {
+            // Test if chrome extension messaging would work
+            if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+                chrome.runtime.sendMessage({
+                    action: 'userLoggedIn',
+                    data: {
+                        user: { name: 'Test User', email: 'test@example.com' },
+                        token: 'test-token'
+                    }
+                }, (response) => {
+                    if (response && response.success) {
+                        document.getElementById('results').innerHTML += 
+                            '<h3>✅ Extension messaging works</h3><p>Successfully sent login message to extension.</p>';
+                    } else {
+                        document.getElementById('results').innerHTML += 
+                            '<h3>❌ Extension messaging failed</h3><p>No response from extension.</p>';
+                    }
+                });
+            } else {
+                document.getElementById('results').innerHTML += 
+                    '<h3>⚠️ Not in extension context</h3><p>Chrome extension APIs not available. This is normal when testing outside the extension.</p>';
+            }
+        }
+
+        // Add event listeners when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Test Login Page button
+            const testLoginBtn = document.getElementById('testLoginBtn');
+            if (testLoginBtn) {
+                testLoginBtn.addEventListener('click', testLogin);
+            }
+
+            // Test Extension Message button
+            const testExtensionMessageBtn = document.getElementById('testExtensionMessageBtn');
+            if (testExtensionMessageBtn) {
+                testExtensionMessageBtn.addEventListener('click', testExtensionMessage);
+            }
+        });
+    </script>
+</body>
+</html>

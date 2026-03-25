@@ -1,5 +1,5 @@
 const timers = {};
-const DURATION = 1 * 60 * 1000; // 1 minute
+const DURATION = 30 * 60 * 1000; // 30 minutes
 let _currentAlarmTab = null;
 
 // Restore timers stored in chrome.storage when the service worker starts
@@ -97,9 +97,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         stopTimer(msg.tabId);
         sendResponse({ ok: true });
         return;
-      }
-
-      if (msg.action === "getEndTime") {
+      }      if (msg.action === "getEndTime") {
         if (timers[msg.tabId]) {
           sendResponse({ endTime: timers[msg.tabId].endTime });
           return;
@@ -110,9 +108,21 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
             const et = timerEndTimes[msg.tabId];
             sendResponse(et ? { endTime: et } : {});
           });
+          return; // Keep message channel open for async response
         } catch (e) {
           sendResponse({});
         }
+        return;
+      }
+
+      if (msg.action === "userLoggedIn") {
+        // Handle user login from PJTSite
+        console.log('User logged in:', msg.data.user);
+        chrome.storage.local.set({ 
+          loggedIn: msg.data.user,
+          userToken: msg.data.token 
+        });
+        sendResponse({ success: true });
         return;
       }
     } catch (err) {
@@ -163,23 +173,28 @@ function stopTimer(tabId) {
 
 async function finishTimer(tabId, name) {
   console.log('finishTimer called for', tabId, 'name:', name);
-  // Only mark finished and play alarm if the tab exists in stored `tabs`.
+  // Only mark finished and show notification if the tab exists in stored `tabs`.
   chrome.storage.local.get({ tabs: [], timerEndTimes: {} }, async ({ tabs, timerEndTimes }) => {
-    const found = (tabs || []).some(t => t.id === tabId);
-    if (found) {
-      console.log('finishTimer: tab found, will play alarm for', tabId);
+    const foundTab = (tabs || []).find(t => t.id === tabId);
+    if (foundTab) {
+      console.log('finishTimer: tab found, will show notification for', tabId);
       const updated = tabs.map(t => (t.id === tabId ? { ...t, finished: true } : t));
       chrome.storage.local.set({ tabs: updated });
 
-      _currentAlarmTab = tabId;
+      // Show notification instead of playing alarm
       try {
-        await playAlarm(tabId);
+        const tabName = foundTab.name || name || 'Unknown Tab';
+        chrome.notifications.create({
+          type: "basic",
+          iconUrl: "berry.png",
+          title: "Timer Finished!",
+          message: `30 minutes have passed. Is "${tabName}" still relevant?`
+        });
       } catch (e) {
-        console.warn('playAlarm promise rejected', e);
+        console.warn('notification creation failed', e);
       }
-      _currentAlarmTab = null;
     } else {
-      console.warn('finishTimer: tab not found in stored tabs, skipping alarm for', tabId);
+      console.warn('finishTimer: tab not found in stored tabs, skipping notification for', tabId);
     }
 
     // cleanup in-memory and persisted entries regardless

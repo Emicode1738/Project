@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Functionality</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { color: green; }
+        .error { color: red; }
+        button { margin: 5px; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Login/Register Functionality Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Login Page</h2>
+        <p>Login page should have:</p>
+        <ul>
+            <li>Username placeholder: "Username (up to 8 characters, letters and numbers only)"</li>
+            <li>Password placeholder: "Password (up to 7 characters, any character allowed)"</li>
+            <li>Basic validation (only check if fields are filled)</li>
+        </ul>          <button id="openLoginBtn">Open Login Page</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Register Page</h2>
+        <p>Register page should have:</p>
+        <ul>
+            <li>Username validation: max 8 characters, letters and numbers only</li>
+            <li>Password validation: max 7 characters, any character allowed</li>
+            <li>Proper placeholder text with guidance</li>
+        </ul>
+        <button id="openRegisterBtn">Open Register Page</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>API Test</h2>
+        <div id="apiResults"></div>
+        <button id="testRegistrationBtn">Test Registration API</button>
+        <button id="testLoginBtn">Test Login API</button>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:3000/api';
+        
+        async function testRegistration() {
+            const resultsDiv = document.getElementById('apiResults');
+            resultsDiv.innerHTML = '<p>Testing registration...</p>';
+            
+            try {
+                // Test valid registration
+                const response = await fetch(`${API_BASE_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'test123', password: 'pass123' })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    resultsDiv.innerHTML += '<p class="success">✓ Registration successful</p>';
+                } else {
+                    resultsDiv.innerHTML += `<p class="error">✗ Registration failed: ${result.message}</p>`;
+                }
+                
+                // Test invalid username (too long)
+                const response2 = await fetch(`${API_BASE_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'toolongusername', password: 'pass' })
+                });
+                
+                const result2 = await response2.json();
+                if (!response2.ok) {
+                    resultsDiv.innerHTML += '<p class="success">✓ Long username correctly rejected</p>';
+                } else {
+                    resultsDiv.innerHTML += '<p class="error">✗ Long username should be rejected</p>';
+                }
+                
+            } catch (error) {
+                resultsDiv.innerHTML += `<p class="error">✗ Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function testLogin() {
+            const resultsDiv = document.getElementById('apiResults');
+            resultsDiv.innerHTML = '<p>Testing login...</p>';
+            
+            try {
+                // Test login with any credentials (should work if user exists)
+                const response = await fetch(`${API_BASE_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'test123', password: 'pass123' })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    resultsDiv.innerHTML += '<p class="success">✓ Login successful</p>';
+                } else {
+                    resultsDiv.innerHTML += `<p class="error">✗ Login failed: ${result.message}</p>`;
+                }
+                
+            } catch (error) {
+                resultsDiv.innerHTML += `<p class="error">✗ Error: ${error.message}</p>`;
+            }
+        }
+
+        // Add event listeners when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Open Login Page button
+            const openLoginBtn = document.getElementById('openLoginBtn');
+            if (openLoginBtn) {
+                openLoginBtn.addEventListener('click', function() {
+                    window.open('PJTSite/login.html', '_blank');
+                });
+            }
+
+            // Open Register Page button
+            const openRegisterBtn = document.getElementById('openRegisterBtn');
+            if (openRegisterBtn) {
+                openRegisterBtn.addEventListener('click', function() {
+                    window.open('PJTSite/register.html', '_blank');
+                });
+            }
+
+            // Test Registration API button
+            const testRegistrationBtn = document.getElementById('testRegistrationBtn');
+            if (testRegistrationBtn) {
+                testRegistrationBtn.addEventListener('click', testRegistration);
+            }
+
+            // Test Login API button
+            const testLoginBtn = document.getElementById('testLoginBtn');
+            if (testLoginBtn) {
+                testLoginBtn.addEventListener('click', testLogin);
+            }
+        });
+    </script>
+</body>
+</html>

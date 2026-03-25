@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Functionality Test</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .test-button:hover {
+            background: #0056b3;
+        }
+        
+        .test-result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Admin Functionality Test</h1>
+        <p>This page tests the admin functionality implementation.</p>
+        
+        <div class="test-section">
+            <h3>1. Database Initialization</h3>
+            <button class="test-button" onclick="testDatabaseInit()">Test Database Init</button>
+            <div id="dbInitResult" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. Admin User Creation</h3>
+            <button class="test-button" onclick="testAdminCreation()">Test Admin Creation</button>
+            <div id="adminCreationResult" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. Admin Login</h3>
+            <button class="test-button" onclick="testAdminLogin()">Test Admin Login</button>
+            <div id="adminLoginResult" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>4. Create Test User</h3>
+            <button class="test-button" onclick="createTestUser()">Create Test User</button>
+            <div id="testUserResult" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>5. List All Users</h3>
+            <button class="test-button" onclick="listAllUsers()">List Users</button>
+            <div id="listUsersResult" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>6. Delete Test User (Admin Only)</h3>
+            <button class="test-button" onclick="testDeleteUser()">Test Delete User</button>
+            <div id="deleteUserResult" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>7. Navigation Links</h3>
+            <a href="login.html" class="test-button">Go to Login</a>
+            <a href="admin.html" class="test-button">Go to Admin Dashboard</a>
+        </div>
+    </div>
+
+    <script src="db.js"></script>
+    <script>
+        async function testDatabaseInit() {
+            const resultDiv = document.getElementById('dbInitResult');
+            resultDiv.style.display = 'block';
+            
+            try {
+                await userDB.init();
+                await userDB.initializeAdmin();
+                resultDiv.className = 'test-result success';
+                resultDiv.textContent = 'SUCCESS: Database initialized and admin user created';
+            } catch (error) {
+                resultDiv.className = 'test-result error';
+                resultDiv.textContent = 'ERROR: ' + error.message;
+            }
+        }
+        
+        async function testAdminCreation() {
+            const resultDiv = document.getElementById('adminCreationResult');
+            resultDiv.style.display = 'block';
+            
+            try {
+                await userDB.init();
+                await userDB.initializeAdmin();
+                
+                // Check if admin exists
+                const users = await userDB.getAllUsers();
+                const adminUser = users.find(user => user.username === 'Admin');
+                
+                if (adminUser && adminUser.role === 'admin') {
+                    resultDiv.className = 'test-result success';
+                    resultDiv.textContent = 'SUCCESS: Admin user exists with correct role';
+                } else {
+                    resultDiv.className = 'test-result error';
+                    resultDiv.textContent = 'ERROR: Admin user not found or incorrect role';
+                }
+            } catch (error) {
+                resultDiv.className = 'test-result error';
+                resultDiv.textContent = 'ERROR: ' + error.message;
+            }
+        }
+        
+        async function testAdminLogin() {
+            const resultDiv = document.getElementById('adminLoginResult');
+            resultDiv.style.display = 'block';
+            
+            try {
+                await userDB.init();
+                const result = await userDB.loginUser('Admin', '017823');
+                
+                if (result.success && result.user.role === 'admin') {
+                    resultDiv.className = 'test-result success';
+                    resultDiv.textContent = 'SUCCESS: Admin login successful with correct role';
+                } else {
+                    resultDiv.className = 'test-result error';
+                    resultDiv.textContent = 'ERROR: Admin login failed or incorrect role';
+                }
+            } catch (error) {
+                resultDiv.className = 'test-result error';
+                resultDiv.textContent = 'ERROR: ' + error.message;
+            }
+        }
+        
+        async function createTestUser() {
+            const resultDiv = document.getElementById('testUserResult');
+            resultDiv.style.display = 'block';
+            
+            try {
+                await userDB.init();
+                const result = await userDB.registerUser('testuser', 'test123', 'user');
+                
+                if (result.success) {
+                    resultDiv.className = 'test-result success';
+                    resultDiv.textContent = 'SUCCESS: Test user created successfully';
+                } else {
+                    resultDiv.className = 'test-result error';
+                    resultDiv.textContent = 'ERROR: Failed to create test user';
+                }
+            } catch (error) {
+                if (error.message.includes('already exists')) {
+                    resultDiv.className = 'test-result info';
+                    resultDiv.textContent = 'INFO: Test user already exists';
+                } else {
+                    resultDiv.className = 'test-result error';
+                    resultDiv.textContent = 'ERROR: ' + error.message;
+                }
+            }
+        }
+        
+        async function listAllUsers() {
+            const resultDiv = document.getElementById('listUsersResult');
+            resultDiv.style.display = 'block';
+            
+            try {
+                await userDB.init();
+                const users = await userDB.getAllUsers();
+                
+                let userList = 'Users in database:\\n';
+                users.forEach(user => {
+                    userList += `- ${user.username} (${user.role || 'user'}) - Created: ${new Date(user.createdAt).toLocaleString()}\\n`;
+                });
+                
+                resultDiv.className = 'test-result success';
+                resultDiv.textContent = userList;
+            } catch (error) {
+                resultDiv.className = 'test-result error';
+                resultDiv.textContent = 'ERROR: ' + error.message;
+            }
+        }
+        
+        async function testDeleteUser() {
+            const resultDiv = document.getElementById('deleteUserResult');
+            resultDiv.style.display = 'block';
+            
+            try {
+                await userDB.init();
+                
+                // First login as admin
+                await userDB.loginUser('Admin', '0178');
+                
+                // Try to delete test user
+                const result = await userDB.deleteUser('testuser');
+                
+                if (result.success) {
+                    resultDiv.className = 'test-result success';
+                    resultDiv.textContent = 'SUCCESS: Test user deleted successfully';
+                } else {
+                    resultDiv.className = 'test-result error';
+                    resultDiv.textContent = 'ERROR: Failed to delete test user';
+                }
+            } catch (error) {
+                resultDiv.className = 'test-result error';
+                resultDiv.textContent = 'ERROR: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

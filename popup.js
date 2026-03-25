@@ -1,4 +1,4 @@
-const DURATION = 1 * 60 * 1000; // 1 minute
+const DURATION = 30 * 60 * 1000; // 30 minutes
 
 document.addEventListener("DOMContentLoaded", () => {
   const addBtn = document.getElementById("addTab");
@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
     chrome.storage.local.get({ loggedIn: null }, ({ loggedIn }) => {
       if (!loggedIn) return alert('Please log in first.');
       chrome.storage.local.get({ tabs: [] }, ({ tabs }) => {
-        if (tabs.length >= 20) return alert("Max 20 tabs allowed");
+        if (tabs.length >= 50) return alert("Max 50 tabs allowed");
         if (tabs.some(t => t.name.toLowerCase() === name.toLowerCase())) {
           if (chrome.notifications && chrome.notifications.create) {
             chrome.notifications.create({
@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function render(tabs) {
     savedTabs.innerHTML = "";
-    counter.textContent = `${tabs.length} / 20`;
+    counter.textContent = `${tabs.length} / 50`;
 
     if (!tabs.length) {
       savedTabs.innerHTML =
@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    tabs.slice(0, 20).forEach(tab => createTab(tab));
+    tabs.slice(0, 50).forEach(tab => createTab(tab));
   }
 
   function createTab(tab) {
@@ -118,12 +118,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const tick = document.createElement("span");
     tick.textContent = "✔";
     tick.className = "tick";
-    tick.title = "Reset timer";
-    tick.onclick = e => {
+    tick.title = "Reset timer";    tick.onclick = e => {
       e.stopPropagation();
+      // Immediately reset circle to 0% to provide instant visual feedback
+      circle.style.background = "conic-gradient(#1e3a8a 0%, rgba(255, 255, 255, 0.3) 0%)";
+      
       chrome.runtime.sendMessage({ action: "resetTimer", tabId: tab.id }, res => {
         setFinished(tab.id, false);
-        if (res?.endTime) animate(circle, res.endTime, false);
+        if (res?.endTime) {
+          // Start animation from 0% with new endTime
+          animate(circle, res.endTime, false);
+        }
       });
     };
 
@@ -163,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const pct = Math.min(Math.max(progress, 0), 100);
 
       circle.style.background =
-        `conic-gradient(#1e3a8a ${pct}%, #ccc ${pct}%)`;
+        `conic-gradient(#1e3a8a ${pct}%, rgba(255, 255, 255, 0.3) ${pct}%)`;
 
       if (pct < 100) requestAnimationFrame(frame);
     }

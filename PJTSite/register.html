@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Register - Login</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Poppins:wght@600&display=swap" rel="stylesheet">
 </head>
@@ -16,31 +16,35 @@
         </div>
         
         <div class="content">
-            <h2 class="form-title">Welcome Back</h2>
-            <p class="form-subtitle">Sign in to your account</p>
+            <h2 class="form-title">Create Account</h2>
+            <p class="form-subtitle">Join Login today</p>
             
             <div id="message" class="message"></div>
 
-            <form id="loginForm" class="auth-form">
+            <form id="registerForm" class="auth-form">
                 <div class="input-group">
-                    <input id="username" type="text" placeholder="Username" required>
+                    <input id="username" type="text" placeholder="Username (max 8)" required maxlength="8">
                 </div>
 
                 <div class="input-group">
-                    <input id="password" type="password" placeholder="Password" required>
+                    <input id="password" type="password" placeholder="Password (max 6 chars)" required minlength="4">
                 </div>
 
-                <button type="submit" class="btn btn-primary">Sign In</button>
+                <div class="input-group">
+                    <input id="confirmPassword" type="password" placeholder="Confirm Password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Create Account</button>
             </form>
 
             <div class="form-footer">
-                <p>Don't have an account?</p>
-                <button id="goToRegisterBtn" class="btn btn-secondary">Create Account</button>
+                <p>Already have an account?</p>
+                <button id="goToLoginBtn" class="btn btn-secondary">Sign In</button>
             </div>
         </div>
     </div>
 
     <script src="db.js"></script>
-    <script src="login.js"></script>
+    <script src="register.js"></script>
 </body>
 </html>

@@ -1,7 +1,5 @@
-// time.js
 
-// 3-minute timer configuration
-const DURATION = 1 * 60 * 1000; // 1 minute
+const DURATION = 30 * 60 * 1000; 
 
 // Start a 3-minute timer for a tab
 function startTabTimer(tab, circle, openCheckCallback) {
@@ -13,12 +11,12 @@ function startTabTimer(tab, circle, openCheckCallback) {
     circle.style.background = `conic-gradient(#1e3a8a ${progress}%, #ccc ${progress}%)`;
     if (progress >= 100) {
       clearInterval(tab.timer);
-      openCheckCallback(tab); // trigger check page
+      openCheckCallback(tab); 
     }
   }, interval);
 }
 
-// Stop a tab's timer
+
 function stopTabTimer(tab) {
   if (tab.timer) clearInterval(tab.timer);
 }

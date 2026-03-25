@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .admin-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        .admin-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        
+        .btn-admin {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-admin:hover {
+            background: #c82333;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .users-table th,
+        .users-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .users-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .users-table tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .role-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .role-admin {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .role-user {
+            background: #28a745;
+            color: white;
+        }
+        
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .delete-btn:hover {
+            background: #c82333;
+        }
+        
+        .delete-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .change-password-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        
+        .change-password-btn:hover {
+            background: #0056b3;
+        }
+        
+        .password-cell {
+            font-family: monospace;
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        .no-users {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>Admin Dashboard</h1>
+            <p>Welcome, <span id="adminName"></span>! Manage users and their access.</p>
+        </div>
+        
+        <div class="admin-actions">
+            <button id="logoutBtn" class="btn-admin btn-secondary">Logout</button>
+        </div>
+        
+        <div id="message" class="message"></div>
+        
+        <div id="usersSection">
+            <h2>User Management</h2>
+            <div id="loadingUsers" class="loading">Loading users...</div>
+            <div id="usersTableContainer" style="display: none;">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>Role</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                    </tbody>
+                </table>
+            </div>
+            <div id="noUsers" class="no-users" style="display: none;">
+                <p>No users found in the database.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="db.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

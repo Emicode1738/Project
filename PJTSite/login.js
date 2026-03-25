@@ -1,108 +1,139 @@
-document.addEventListener('DOMContentLoaded', function () {
-  const form = document.getElementById('login-form');
-  const username = document.getElementById('username');
-  const password = document.getElementById('password');
-  const clientMsg = document.getElementById('client-error');
-  const loginBtn = form.querySelector('button[type="submit"]');
+// Login functionality with IndexedDB
+console.log('login.js loaded');
 
-  function showError(msg) {
-    clientMsg.classList.remove('success');
-    clientMsg.classList.add('error');
-    clientMsg.textContent = msg;
-    clientMsg.style.display = 'block';
-  }
-
-  function showSuccess(msg) {
-    clientMsg.classList.remove('error');
-    clientMsg.classList.add('success');
-    clientMsg.textContent = msg;
-    clientMsg.style.display = 'block';
-  }
-
-  function clearMsg() {
-    clientMsg.textContent = '';
-    clientMsg.style.display = 'none';
-  }
-
-  // Show server-provided messages if present (harmless fallback)
-  const params = new URLSearchParams(window.location.search);
-  if (params.has('error')) showError(params.get('error'));
-  else if (params.has('success')) showSuccess(params.get('success'));
-
-  // Live input filtering: allow only letters and numbers, max 8
-  username.addEventListener('input', function (e) {
-    const raw = username.value;
-    // Remove any non-alphanumeric characters
-    let filtered = raw.replace(/[^A-Za-z0-9]/g, '');
-    if (filtered.length > 8) filtered = filtered.slice(0, 8);
-    if (filtered !== raw) {
-      username.value = filtered;
-      showError('Only letters and numbers allowed; max 8 characters.');
-      // Clear the message after a short delay so it doesn't stick
-      setTimeout(() => { if (clientMsg.classList.contains('error')) clearMsg(); }, 2200);
+// Make sure goToRegister is available globally
+window.goToRegister = function() {
+    console.log('goToRegister function called');
+    try {
+        window.location.href = 'register.html';
+    } catch (error) {
+        console.error('Error in goToRegister:', error);
+        alert('Error navigating to register page: ' + error.message);
     }
-  });
+};
 
-  // Form submission: client-side validation then server-side auth
-  form.addEventListener('submit', async function (e) {
-    e.preventDefault();
-    clearMsg();
-
-    const userVal = username.value.trim();
-    const passVal = password.value;
-
-    // Client-side validation
-    const userRegex = /^[A-Za-z0-9]{1,8}$/;
-    if (!userRegex.test(userVal)) {
-      showError('Username must be 1–8 characters and contain only letters and numbers.');
-      return;
+document.addEventListener('DOMContentLoaded', async function() {
+    // Initialize the database
+    try {
+        await userDB.init();
+        // Initialize admin user if it doesn't exist
+        await userDB.initializeAdmin();
+    } catch (error) {
+        console.error('Failed to initialize database:', error);
+        showMessage('Database initialization failed', 'error');
     }
 
-    if (passVal.length === 0) {
-      showError('Password is required.');
-      return;
+    // Check if user is already logged in
+    if (userDB.isLoggedIn()) {
+        showMessage(`Welcome back, ${userDB.getCurrentUser()}!`, 'success');
+        // Optionally redirect to dashboard or main page
+        // window.location.href = 'dashboard.html';
     }
 
-    if (passVal.length > 10) {
-      showError('Password must be at most 10 characters.');
-      return;
-    }
+    // Handle login form submission
+    const loginForm = document.getElementById('loginForm');
+    loginForm.addEventListener('submit', handleLogin);
 
-    // Disable button during submission
-    loginBtn.disabled = true;
-    loginBtn.textContent = 'Signing in...';
+    // Handle "Create Account" button click
+    const goToRegisterBtn = document.getElementById('goToRegisterBtn');
+    if (goToRegisterBtn) {
+        goToRegisterBtn.addEventListener('click', goToRegister);
+    }
+});
+
+async function handleLogin(event) {
+    event.preventDefault();
+    
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+    
+    // Basic validation
+    if (!username || !password) {
+        showMessage('Please fill in all fields', 'error');
+        return;
+    }
 
     try {
-      // Local authentication (no server needed)
-      const validUsers = {
-        'danielle': 'password123',
-        'admin': 'admin123'
-      };
-
-      const userKey = userVal.toLowerCase();
-      if (validUsers[userKey] && validUsers[userKey] === passVal) {
-        showSuccess(`Welcome ${userVal}! You are now signed in.`);
-        // Persist logged-in state for the extension popup
-        chrome.storage.local.set({
-          loggedIn: {
-            username: userVal,
-            token: 'local-token-' + Date.now(),
-            userId: Math.random().toString(36).substr(2, 9)
-          }
-        }, () => {
-          console.log('User logged in:', userVal);
-          // Close this tab after login
-          setTimeout(() => window.close(), 1500);
-        });
-      } else {
-        showError('Invalid username or password');
-        loginBtn.disabled = false;
-        loginBtn.textContent = 'Login';
-      }
-    } catch (err) {
-      showError('Error: ' + err.message);
-      loginBtn.disabled = false;
-      loginBtn.textContent = 'Login';
+        showMessage('Logging in...', 'info');
+        
+        const result = await userDB.loginUser(username, password);
+        
+        if (result.success) {
+            showMessage(result.message, 'success');
+            
+            // Clear form
+            document.getElementById('loginForm').reset();
+            
+            // Notify the extension about successful login
+            if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+                chrome.runtime.sendMessage({
+                    action: 'userLoggedIn',
+                    data: {
+                        user: result.user,
+                        token: 'session-token-' + Date.now() // Simple token for demo
+                    }
+                }, (response) => {
+                    if (chrome.runtime.lastError) {
+                        console.warn('Failed to notify extension:', chrome.runtime.lastError.message);
+                    } else {
+                        console.log('Extension notified of login:', response);
+                    }
+                });
+            }
+            
+            // Redirect after successful login (you can customize this)
+            setTimeout(() => {
+                if (result.user.role === 'admin') {
+                    showMessage(`Welcome Admin! Redirecting to admin dashboard...`, 'success');
+                    window.location.href = 'admin.html';
+                } else {
+                    showMessage(`Welcome, ${username}! You are now logged in.`, 'success');
+                    // Close the tab after successful login to return to extension
+                    if (typeof chrome !== 'undefined' && chrome.tabs) {
+                        chrome.tabs.getCurrent((tab) => {
+                            if (tab) {
+                                chrome.tabs.remove(tab.id);
+                            }
+                        });
+                    } else {
+                        // Fallback: just show success message
+                        showMessage('Login successful! You can now close this tab.', 'success');
+                    }
+                }
+            }, 1500);
+        }
+    } catch (error) {
+        showMessage(error.message, 'error');
     }
-  });
-});
+}
+
+function goToRegister() {
+    console.log('goToRegister function called');
+    try {
+        window.location.href = 'register.html';
+    } catch (error) {
+        console.error('Error in goToRegister:', error);
+        alert('Error navigating to register page: ' + error.message);
+    }
+}
+
+function showMessage(message, type = 'info') {
+    const messageDiv = document.getElementById('message');
+    messageDiv.textContent = message;
+    messageDiv.className = `message ${type}`;
+    
+    // Clear message after 5 seconds
+    setTimeout(() => {
+        messageDiv.textContent = '';
+        messageDiv.className = 'message';
+    }, 5000);
+}
+
+// Logout function (can be called from other pages)
+function logout() {
+    userDB.logout();
+    showMessage('Logged out successfully', 'success');
+    setTimeout(() => {
+        window.location.href = 'login.html';
+    }, 1000);
+}

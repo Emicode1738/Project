@@ -19,5 +19,11 @@
     "16": "berry.png",
     "48": "berry.png",
     "128": "berry.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["PJTSite/*"],
+      "matches": ["chrome-extension://*/*"]
+    }
+  ]
 }
