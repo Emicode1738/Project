@@ -17,5 +17,5 @@ The **Blueberry Browser Extension** is a Tab Management tool that allows users t
 4. **Enable Developer Mode:** In the top-right corner of the Extensions page, toggle the **Developer mode** switch to **ON**.
 5. **Load Extension:** * Click the **Load unpacked** button in the top-left.
    * Navigate into the folder you just extracted.
-   * Select the folder named **`Project`** (this is the folder containing the `manifest.json` file).
+   * Select the folder named **`Project`** and click **Select**.
 
