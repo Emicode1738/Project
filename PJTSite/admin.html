@@ -111,29 +111,6 @@
             cursor: not-allowed;
         }
         
-        .change-password-btn {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            margin-left: 5px;
-        }
-        
-        .change-password-btn:hover {
-            background: #0056b3;
-        }
-        
-        .password-cell {
-            font-family: monospace;
-            background: #f8f9fa;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-        
         .loading {
             text-align: center;
             padding: 20px;
@@ -155,7 +132,8 @@
         </div>
         
         <div class="admin-actions">
-            <button id="logoutBtn" class="btn-admin btn-secondary">Logout</button>
+            <button class="btn-admin btn-secondary" onclick="refreshUsers()">Refresh Users</button>
+            <button class="btn-admin btn-secondary" onclick="logout()">Logout</button>
         </div>
         
         <div id="message" class="message"></div>
@@ -168,7 +146,6 @@
                     <thead>
                         <tr>
                             <th>Username</th>
-                            <th>Password</th>
                             <th>Role</th>
                             <th>Created At</th>
                             <th>Actions</th>
