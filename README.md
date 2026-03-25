@@ -13,9 +13,9 @@ The **Blueberry Browser Extension** is a Tab Management tool that allows users t
 ### 🛠️ How to Set Up
 1. **Download:** Click the link above to get the ZIP file of the repository.
 2. **Extract:** Locate the downloaded file on your computer, right-click it, and select **Extract All**.
-3. **Open Extensions Page:** Open Google Chrome (or any Chromium browser) and type `chrome://extensions/` in the address bar.
+3. **Open Extensions Page:** Open Google Chrome  and type `chrome://extensions/` in the address bar.
 4. **Enable Developer Mode:** In the top-right corner of the Extensions page, toggle the **Developer mode** switch to **ON**.
 5. **Load Extension:** * Click the **Load unpacked** button in the top-left.
-   * Navigate into the folder you just extracted.
-   * Select the folder named **`Project`** and click **Select**.
+   * Select the folder you just extracted.And your DONE.
+
 
